@@ -1,13 +1,13 @@
 App = {
   web3Provider: null,
   contracts: {},
+  filter_list: {},
 
   init: async function() {
     // Load pets.
-    $.getJSON('../pets.json', function(data) {
+    $.getJSON('../pets.json', function(data) {      
       var petsRow = $('#petsRow');
       var petTemplate = $('#petTemplate');
-
       for (i = 0; i < data.length; i ++) {
         petTemplate.find('.panel-title').text(data[i].name);
         petTemplate.find('img').attr('src', data[i].picture);
@@ -64,6 +64,120 @@ web3 = new Web3(App.web3Provider);
 
     return App.bindEvents();
   },
+
+
+
+  Filter: function() {
+    var breed = document.getElementById("selectedBreed").value;
+    var age = document.getElementById("selectedAge").value;
+    App.updateFilteredPets(breed, age)
+  },
+
+  updateFilteredPets(breed, age) {
+
+      App.filter_list = {}
+      $.getJSON('../pets.json', function(data) {
+          const petsRow = document.getElementById("petsRow");
+          var petTemplate = $('#petTemplate');
+          petsRow.innerHTML = ""
+
+          for (i = 0; i < data.length; i++) {
+              if (data[i].breed == breed || breed == "all") {
+                if (data[i].age == age || age == "all"){
+
+                  App.filter_list[data[i].id] = i;
+                  petTemplate.find('.panel-title').text(data[i].name);
+                  petTemplate.find('img').attr('src', data[i].picture);
+                  petTemplate.find('.pet-breed').text(data[i].breed);
+                  petTemplate.find('.pet-age').text(data[i].age);
+                  petTemplate.find('.pet-location').text(data[i].location);
+                  petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+
+                  petsRow.innerHTML += petTemplate.html()
+
+                }
+              }
+          }
+
+          if ( petsRow.innerHTML == "") {
+            petsRow.innerHTML += "No result"
+          }
+      });
+
+      App.markAdopted();
+
+  },
+
+  Reset: function() {
+    App.ResetPets()
+  },
+
+  ResetPets() {
+
+      App.filter_list = {}
+      $.getJSON('../pets.json', function(data) {
+          const petsRow = document.getElementById("petsRow");
+          var petTemplate = $('#petTemplate');
+          petsRow.innerHTML = ""
+
+          for (i = 0; i < data.length; i++) {
+            App.filter_list[data[i].id] = i;
+            petTemplate.find('.panel-title').text(data[i].name);
+            petTemplate.find('img').attr('src', data[i].picture);
+            petTemplate.find('.pet-breed').text(data[i].breed);
+            petTemplate.find('.pet-age').text(data[i].age);
+            petTemplate.find('.pet-location').text(data[i].location);
+            petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+
+            petsRow.innerHTML += petTemplate.html()
+
+          }
+      });
+
+      App.markAdopted();
+
+  },
+
+  Search: function() {
+    var keyword = document.getElementById("searchbar").value.toLowerCase()
+    App.SearchPets(keyword)
+  },
+
+  SearchPets(keyword) {
+    App.filter_list = {}
+    $.getJSON('../pets.json', function(data) {
+        const petsRow = document.getElementById("petsRow");
+        var petTemplate = $('#petTemplate');
+        petsRow.innerHTML = ""
+
+        for (i = 0; i < data.length; i++) {
+          var name_bool = Boolean(data[i].name.toLowerCase().indexOf(keyword) > -1)
+          var location_bool = Boolean(data[i].location.toLowerCase().indexOf(keyword)> -1)
+          if ( name_bool || location_bool) {
+            App.filter_list[data[i].id] = i;
+            petTemplate.find('.panel-title').text(data[i].name);
+            petTemplate.find('img').attr('src', data[i].picture);
+            petTemplate.find('.pet-breed').text(data[i].breed);
+            petTemplate.find('.pet-age').text(data[i].age);
+            petTemplate.find('.pet-location').text(data[i].location);
+            petTemplate.find('.btn-adopt').attr('data-id', data[i].id);
+
+            petsRow.innerHTML += petTemplate.html()
+          }
+
+          if ( petsRow.innerHTML == "") {
+            petsRow.innerHTML += "No result"
+          }
+
+          
+        }
+    });
+
+    App.markAdopted();
+
+},
+
+  
 
   bindEvents: function() {
     $(document).on('click', '.btn-adopt', App.handleAdopt);
