@@ -27,6 +27,78 @@
         </div>
       </div>
 
+      <div class="row">
+        <form>
+            <label>Breed</label>
+            <select id="selectedBreed">
+            <option value="all">All</option>
+            <option value="Scottish Terrier">Scottish Terrier</option>
+            <option value="French Bulldog">French Bulldog</option>
+            <option value="Boxer">Boxer</option>
+            <option value="Golden Retriever">Golden Retriever</option>
+            </select>
+
+            <label>Age</label>
+            <select id="selectedAge">
+            <option value="all">All</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            </select>
+
+            <input type="button" id="PetFilter" value="Filter" />
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script type="text/javascript">
+              $(function () {
+                  $("#PetFilter").bind("click", function () {
+                    document.getElementById('searchbar').value = "";
+                      App.Filter()
+                  });
+              });
+            </script>
+
+            <button type="button, reset" onclick="App.Reset()" id="PetReset">Reset</button>
+
+        </form>
+        <br>
+
+      </div>
+      
+      <div class="row">
+        <form id = "search_form">
+            <label>Search</label>
+
+            <input type="text" id="searchbar" autocomplete="off" placeholder="Name or Location">
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script type="text/javascript">
+              $(window).ready(function() {
+              $("#search_form").on("keypress", function (event) {
+                  var keyPressed = event.keyCode || event.which;
+                  if (keyPressed === 13) {
+                      event.preventDefault();
+                      $("#selectedBreed")[0].selectedIndex = 0;
+                      $("#selectedAge")[0].selectedIndex = 0;
+                      App.Search()
+                  }
+              });
+              });
+            </script>
+
+            <button type="button" id="PetSearch" value="Search">Search</button>
+            <script type="text/javascript">
+              $("#PetSearch").bind("click", function () {
+                  $("#selectedBreed")[0].selectedIndex = 0;
+                  $("#selectedAge")[0].selectedIndex = 0;
+                  App.Search()
+              });
+            </script>
+            
+
+          </form>
+          <br>
+      
+      </div>  
+
       <div id="petsRow" class="row">
         <!-- PETS LOAD HERE -->
       </div>
